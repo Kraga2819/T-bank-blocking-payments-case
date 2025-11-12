@@ -1,0 +1,94 @@
+openapi: 3.1.0
+info:
+  title: T-bank-blocking-payments-case
+  version: 1.0.0
+  description: API для управления блокировками платежей клиентов
+
+components:
+  schemas:
+    BlockType:
+      type: string
+      enum: [FRAUD, INCORRECT_DETAILS, OTHER]
+    BlockStatus:
+      type: string
+      enum: [ACTIVE, RELEASED, EXPIRED]
+    BlockRequest:
+      type: object
+      required: [blockType]
+      properties:
+        blockType:
+          $ref: '#/components/schemas/BlockType'
+        reason:
+          type: string
+          maxLength: 500
+        expiresAt:
+          type: string
+          format: date-time
+          nullable: true
+    ActiveStatus:
+      type: object
+      properties:
+        blocked: { type: boolean }
+        reason: { $ref: '#/components/schemas/BlockType' }
+        blockId: { type: string, format: uuid, nullable: true }
+
+paths:
+  /clients/{clientId}/blocks:
+    post:
+      summary: Создать активную блокировку
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BlockRequest' }
+      responses:
+        '201':
+          description: Создана блокировка
+        '409':
+          description: Активная блокировка уже существует
+
+  /clients/{clientId}/blocks/active:
+    get:
+      summary: Проверка — заблокирован ли клиент и по какой причине
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ActiveStatus' }
+        '404':
+          description: Клиент не найден
+
+  /clients/{clientId}/blocks/release:
+    post:
+      summary: Снять блокировку
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  maxLength: 500
+      responses:
+        '200':
+          description: Блокировка снята
+        '404':
+          description: Нет активной блокировки
