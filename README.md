@@ -110,7 +110,7 @@
 
 ---
 
-**SQL-код для создания таблиц:** `./db_structure/db.sql`
+**SQL-код для создания таблиц:** [db.sql](./db_structure/db.sql)
 
 ---
 
