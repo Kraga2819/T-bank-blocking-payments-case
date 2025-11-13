@@ -103,7 +103,7 @@
 `id` - Идентификатор записи <br>
 `event_time` - Дата и время события <br>
 `actor` - Кто выполнил действие <br>
-`action` - Тип действия (`CREATE_BLOCK`, `RELEASE_BLOCK` и т.д.) <br>n
+`action` - Тип действия (`CREATE_BLOCK`, `RELEASE_BLOCK` и т.д.) <br>
 `client_id` - Идентификатор клиента <br>
 `block_id` - Идентификатор блокировки <br>
 `details` - Дополнительные данные <br>
