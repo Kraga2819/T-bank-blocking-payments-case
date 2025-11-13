@@ -13,12 +13,14 @@
 ---
 
 ## Структура репозитория
-.<br>
-├─ ./README.md<br>
-├─ ./openapi.yaml<br>
-└─ ./db_structure/<br>
-   ├─ ./db.sql<br>
-   └─ ./ERD_db.png<br>
+```markdown
+.
+├─ [README.md](./README.md)
+├─ [openapi.yaml](./openapi.yaml)
+└─ db_structure/
+   ├─ [db.sql](./db_structure/db.sql)
+   └─ [ERD_db.png](./db_structure/ERD_db.png)
+```
 
 ---
 
