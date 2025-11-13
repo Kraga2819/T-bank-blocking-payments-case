@@ -24,13 +24,26 @@ components:
         expiresAt:
           type: string
           format: date-time
-          nullable: true
+    Block:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        clientId: { type: string, format: uuid }
+        type: { $ref: '#/components/schemas/BlockType' }
+        status: { $ref: '#/components/schemas/BlockStatus' }
+        reason: { type: string }
+        createdAt: { type: string, format: date-time }
+        createdBy: { type: string }
+        releasedAt: { type: string, format: date-time }
+        releasedBy: { type: string }
+        releaseReason: { type: string }
+        expiresAt: { type: string, format: date-time }
     ActiveStatus:
       type: object
       properties:
         blocked: { type: boolean }
         reason: { $ref: '#/components/schemas/BlockType' }
-        blockId: { type: string, format: uuid, nullable: true }
+        blockId: { type: string, format: uuid }
 
 paths:
   /clients/{clientId}/blocks:
@@ -52,9 +65,30 @@ paths:
         '409':
           description: Активная блокировка уже существует
 
+    get:
+      summary: Список блокировок клиента
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/Block' }
+        '404':
+          description: Нет пользователя с таким clientD
+
   /clients/{clientId}/blocks/active:
     get:
-      summary: Проверка — заблокирован ли клиент и по какой причине
+      summary: Быстрая проверка — заблокирован ли клиент сейчас
       parameters:
         - name: clientId
           in: path
@@ -67,13 +101,17 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/ActiveStatus' }
         '404':
-          description: Клиент не найден
+          description: Нет пользователя с таким clientId
 
-  /clients/{clientId}/blocks/release:
+  /clients/{clientId}/blocks/{blockId}/release:
     post:
       summary: Снять блокировку
       parameters:
         - name: clientId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: blockId
           in: path
           required: true
           schema: { type: string, format: uuid }
@@ -91,4 +129,4 @@ paths:
         '200':
           description: Блокировка снята
         '404':
-          description: Нет активной блокировки
+          description: Нет активной блокировки/нет такого пользователя
